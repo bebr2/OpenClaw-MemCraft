@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MemCraft Dashboard</title>
+  <style>
+    :root {
+      --bg: #f4f5ee;
+      --card: #fffdf7;
+      --ink: #1d2828;
+      --muted: #5d6764;
+      --accent: #bb3e2f;
+      --accent-2: #2a7f66;
+      --line: #d9dccf;
+      --chart: #25705a;
+      --chart-soft: #d6ebe5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Trebuchet MS", "Segoe UI", Tahoma, sans-serif;
+      background:
+        radial-gradient(circle at 85% -10%, #e7f4f0 0%, transparent 45%),
+        radial-gradient(circle at 0% 100%, #f5e6dc 0%, transparent 35%),
+        var(--bg);
+      color: var(--ink);
+    }
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .title {
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+    }
+    .subtitle { color: var(--muted); font-size: 14px; }
+    .btn {
+      border: 0;
+      border-radius: 10px;
+      background: linear-gradient(120deg, var(--accent), #d85a49);
+      color: #fff;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .card {
+      border: 1px solid var(--line);
+      background: var(--card);
+      border-radius: 14px;
+      padding: 12px;
+      box-shadow: 0 5px 16px rgba(0,0,0,0.05);
+    }
+    .metric { font-size: 26px; font-weight: 700; }
+    .label { color: var(--muted); font-size: 13px; }
+    .kpi-note {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .chart-wrap {
+      margin-top: 10px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: linear-gradient(180deg, #fbfdfb 0%, #f2f7f5 100%);
+      padding: 10px 12px;
+    }
+    .chart-title {
+      margin: 0 0 8px;
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .chart {
+      width: 100%;
+      height: 210px;
+      display: block;
+    }
+    .axis-label {
+      fill: var(--muted);
+      font-size: 11px;
+    }
+    .bar {
+      fill: var(--chart);
+      opacity: 0.9;
+    }
+    .bar-bg {
+      fill: var(--chart-soft);
+    }
+    .bar-value {
+      fill: var(--ink);
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .list { display: grid; gap: 10px; }
+    .item {
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--accent-2);
+      border-radius: 12px;
+      background: #fffdf8;
+      padding: 12px;
+    }
+    .meta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+    .summary { font-weight: 700; margin-bottom: 6px; }
+    .memory { white-space: pre-wrap; line-height: 1.45; }
+    .item-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .toggle-btn {
+      border: 1px solid var(--line);
+      background: #ffffff;
+      color: var(--ink);
+      border-radius: 8px;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    .memory-detail.collapsed { display: none; }
+    @media (max-width: 840px) {
+      .grid { grid-template-columns: 1fr; }
+      .title { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div>
+        <div class="title">MemCraft Dashboard</div>
+        <div class="subtitle" id="storeTypeSubtitle">Memory items and retrieval index overview</div>
+      </div>
+      <button class="btn" id="refreshBtn">Refresh</button>
+    </div>
+
+    <div class="grid">
+      <div class="card"><div class="metric" id="totalDocs">0</div><div class="label">Total Documents</div></div>
+      <div class="card"><div class="metric" id="avgLen">0</div><div class="label">Avg Doc Length</div></div>
+      <div class="card">
+        <div class="metric" id="recent7dTotal">0</div>
+        <div class="label">Memories in Last 7 Days</div>
+        <div class="kpi-note" id="recent7dRange">-</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom: 14px;">
+      <h3 style="margin-top: 0">Memory Trend</h3>
+      <div class="chart-wrap">
+        <p class="chart-title">Recent 7 Days Memory Count</p>
+        <svg id="memoryChart" class="chart" viewBox="0 0 760 210" preserveAspectRatio="none"></svg>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top: 0">Recent Memories</h3>
+      <div class="list" id="memoriesList"></div>
+    </div>
+  </div>
+
+  <script>
+    const SESSION_ID_RE =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    const collapsedBySession = new Map();
+    let dashboardTimezone = 'UTC';
+
+    function escapeHtml(text) {
+      return String(text || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function normalizeSessionId(raw) {
+      const value = String(raw || '').trim();
+      if (!value) return '';
+      return SESSION_ID_RE.test(value) ? value : '';
+    }
+
+    function formatTimeWithTimezone(isoText) {
+      const text = String(isoText || '').trim();
+      if (!text) return '-';
+
+      const parsed = new Date(text);
+      if (Number.isNaN(parsed.getTime())) return text;
+
+      const options = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+        timeZoneName: 'short',
+      };
+
+      if (dashboardTimezone && dashboardTimezone !== 'local') {
+        options.timeZone = dashboardTimezone;
+      }
+
+      try {
+        return parsed.toLocaleString(undefined, options);
+      } catch (_err) {
+        return parsed.toLocaleString();
+      }
+    }
+
+    function applySessionCollapseState(sessionGroup, collapsed) {
+      const details = document.querySelectorAll(`[data-session-group="${sessionGroup}"]`);
+      details.forEach((node) => {
+        if (node.classList.contains('memory-detail')) {
+          node.classList.toggle('collapsed', collapsed);
+        }
+      });
+
+      const buttons = document.querySelectorAll(`[data-toggle-session-group="${sessionGroup}"]`);
+      buttons.forEach((btn) => {
+        btn.textContent = collapsed ? 'Expand' : 'Collapse';
+      });
+    }
+
+    function shortDateLabel(isoDate) {
+      if (!isoDate) return '-';
+      const text = String(isoDate).trim();
+      const m = text.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (!m) return text;
+      return `${Number(m[2])}/${Number(m[3])}`;
+    }
+
+    function renderRecentChart(points) {
+      const svg = document.getElementById('memoryChart');
+      svg.innerHTML = '';
+
+      const data = Array.isArray(points) ? points : [];
+      if (!data.length) {
+        svg.innerHTML = '<text x="12" y="28" class="axis-label">No data</text>';
+        return;
+      }
+
+      const width = 760;
+      const height = 210;
+      const left = 36;
+      const right = 16;
+      const top = 14;
+      const bottom = 36;
+      const innerW = width - left - right;
+      const innerH = height - top - bottom;
+
+      const maxValue = Math.max(1, ...data.map((d) => Number(d.count) || 0));
+      const gap = 10;
+      const barWidth = Math.max(18, (innerW - gap * (data.length - 1)) / data.length);
+
+      const parts = [];
+      parts.push(`<line x1="${left}" y1="${top + innerH}" x2="${width - right}" y2="${top + innerH}" stroke="#b7c8c1" stroke-width="1" />`);
+
+      data.forEach((point, idx) => {
+        const value = Number(point.count) || 0;
+        const x = left + idx * (barWidth + gap);
+        const h = Math.max(2, Math.round((value / maxValue) * (innerH - 8)));
+        const y = top + innerH - h;
+        const labelX = x + barWidth / 2;
+
+        parts.push(`<rect class="bar-bg" x="${x}" y="${top}" width="${barWidth}" height="${innerH}" rx="4" />`);
+        parts.push(`<rect class="bar" x="${x}" y="${y}" width="${barWidth}" height="${h}" rx="4" />`);
+        parts.push(`<text class="bar-value" x="${labelX}" y="${Math.max(top + 12, y - 4)}" text-anchor="middle">${value}</text>`);
+        parts.push(`<text class="axis-label" x="${labelX}" y="${height - 12}" text-anchor="middle">${shortDateLabel(point.date)}</text>`);
+      });
+
+      svg.innerHTML = parts.join('');
+    }
+
+    async function loadData() {
+      const res = await fetch('/memories?limit=100');
+      const data = await res.json();
+
+      const storeType = String(data.store_type || 'unknown');
+      document.getElementById('storeTypeSubtitle').textContent = `${storeType} memory items and retrieval index overview`;
+
+      const stats = data.stats || {};
+      dashboardTimezone = String(stats.dashboard_timezone || 'UTC');
+      document.getElementById('totalDocs').textContent = stats.total_documents || 0;
+      document.getElementById('avgLen').textContent = Number(stats.avg_document_length || 0).toFixed(1);
+      document.getElementById('recent7dTotal').textContent = Number(stats.recent_7d_total || 0);
+
+      const daily = Array.isArray(stats.recent_7d_daily) ? stats.recent_7d_daily : [];
+      if (daily.length) {
+        const first = shortDateLabel(daily[0].date);
+        const last = shortDateLabel(daily[daily.length - 1].date);
+        document.getElementById('recent7dRange').textContent = `${first} - ${last} (${dashboardTimezone})`;
+      } else {
+        document.getElementById('recent7dRange').textContent = '-';
+      }
+      renderRecentChart(daily);
+
+      const list = document.getElementById('memoriesList');
+      list.innerHTML = '';
+      const items = data.items || [];
+      if (!items.length) {
+        list.innerHTML = '<div class="label">No memories yet.</div>';
+        return;
+      }
+
+      for (let i = 0; i < items.length; i += 1) {
+        const item = items[i];
+        const display = item.display || {};
+        const displayMeta = display.meta || {};
+        const title = display.title || item.summary || item.id || '(untitled memory)';
+        const body = display.body || item.compressed_memory || '';
+        const category = displayMeta.category || item.raw?.category || '-';
+        const context = displayMeta.context || item.raw?.context || '-';
+        const score = displayMeta.score;
+        const scoreLabel = (score === undefined || score === null || score === '') ? '-' : String(score);
+        const normalizedSessionId = normalizeSessionId(item.session_id);
+        const sessionGroup = normalizedSessionId || `unknown-${item.id || i}`;
+        const collapsed = collapsedBySession.get(sessionGroup) === true;
+
+        const el = document.createElement('div');
+        el.className = 'item';
+        el.innerHTML = `
+          <div class="item-head">
+            <div class="meta">
+              <span>ID: ${escapeHtml(item.id || '-')}</span>
+              <span>Namespace: ${escapeHtml(item.namespace || 'default')}</span>
+              <span>Session: ${escapeHtml(normalizedSessionId || '-')}</span>
+              <span>Time: ${escapeHtml(formatTimeWithTimezone(item.created_at))}</span>
+              <span>Source: ${escapeHtml(item.source || '-')}</span>
+              <span>Category: ${escapeHtml(category)}</span>
+              <span>Context: ${escapeHtml(context)}</span>
+              <span>Score: ${escapeHtml(scoreLabel)}</span>
+            </div>
+            <button class="toggle-btn" data-toggle-session-group="${escapeHtml(sessionGroup)}">${collapsed ? 'Expand' : 'Collapse'}</button>
+          </div>
+          <div class="memory-detail${collapsed ? ' collapsed' : ''}" data-session-group="${escapeHtml(sessionGroup)}">
+            <div class="summary">${escapeHtml(title)}</div>
+            <div class="memory">${escapeHtml(body)}</div>
+          </div>
+        `;
+
+        const toggleBtn = el.querySelector('[data-toggle-session-group]');
+        if (toggleBtn) {
+          toggleBtn.addEventListener('click', () => {
+            const current = collapsedBySession.get(sessionGroup) === true;
+            const next = !current;
+            collapsedBySession.set(sessionGroup, next);
+            applySessionCollapseState(sessionGroup, next);
+          });
+        }
+
+        list.appendChild(el);
+      }
+    }
+
+    document.getElementById('refreshBtn').addEventListener('click', loadData);
+    loadData();
+  </script>
+</body>
+</html>

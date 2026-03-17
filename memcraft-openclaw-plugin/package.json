@@ -1,0 +1,15 @@
+{
+  "name": "memcraft-openclaw-plugin",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "OpenClaw lifecycle plugin for MemCraft retrieval and storage",
+  "main": "index.js",
+  "openclaw": {
+    "extensions": [
+      "./index.js"
+    ]
+  },
+  "scripts": {
+    "lint": "node --check index.js"
+  }
+}

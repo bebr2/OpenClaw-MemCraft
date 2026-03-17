@@ -1,0 +1,39 @@
+{
+  "id": "memcraft-openclaw-plugin",
+  "name": "MemCraft OpenClaw Plugin",
+  "description": "Retrieve memory before prompt build and store memory by configured mode",
+  "version": "0.1.0",
+  "kind": "lifecycle",
+  "main": "./index.js",
+  "configSchema": {
+    "type": "object",
+    "properties": {
+      "serverUrl": { "type": "string", "default": "http://127.0.0.1:8765" },
+      "timeoutMs": { "type": "integer", "default": 100000 },
+      "retrieveTimeoutMs": { "type": "integer", "default": 100000 },
+      "storeTimeoutMs": { "type": "integer", "default": 450000 },
+      "topK": { "type": "integer", "default": 5 },
+      "captureMode": {
+        "type": "string",
+        "enum": ["last_turn", "full_session"],
+        "default": "full_session",
+        "description": "Deprecated and ignored; storage always uses full-session filtered messages"
+      },
+      "includeAssistant": { "type": "boolean", "default": true },
+      "includeToolMessages": { "type": "boolean", "default": false },
+      "promptTitle": { "type": "string", "default": "Related memory context" },
+      "namespace": { "type": "string", "default": "default" },
+      "retrieveBySession": { "type": "boolean", "default": false },
+      "stripHistoryMemory": { "type": "boolean", "default": false },
+      "storeGranularity": {
+        "type": "string",
+        "enum": ["session_end", "agent_end"],
+        "default": "session_end"
+      },
+      "debug": { "type": "boolean", "default": false },
+      "logFinalContext": { "type": "boolean", "default": false },
+      "contextPreviewMaxChars": { "type": "integer", "default": 2000 }
+    },
+    "additionalProperties": false
+  }
+}
