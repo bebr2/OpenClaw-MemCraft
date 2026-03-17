@@ -43,7 +43,7 @@ The baseline implementations are reproduced with reference to [MemoryBench](http
 ### 1. Clone
 
 ```bash
-git clone <your-repo-url> MemCraft
+git clone https://github.com/bebr2/OpenClaw-MemCraft.git
 cd MemCraft
 ```
 
