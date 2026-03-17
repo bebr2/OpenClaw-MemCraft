@@ -1,15 +1,15 @@
-from .base_memory import BaseMemoryStore
-from .bm25_memory import BM25MemoryStore
-from .amem_memory import AMemMemoryStore
-from .mem0_memory import Mem0MemoryStore
-from .memoryos_memory import MemoryOSMemoryStore
+from .base_memory import BaseMemory
+from .bm25_memory import BM25Memory
+from .amem_memory import AMemMemory
+from .mem0_memory import Mem0Memory
+from .memoryos_memory import MemoryOSMemory
 from .llm_task_client import LLMTaskClient
 
 __all__ = [
-	"BaseMemoryStore",
-	"BM25MemoryStore",
-	"AMemMemoryStore",
-	"Mem0MemoryStore",
-	"MemoryOSMemoryStore",
+	"BaseMemory",
+	"BM25Memory",
+	"AMemMemory",
+	"Mem0Memory",
+	"MemoryOSMemory",
 	"LLMTaskClient",
 ]

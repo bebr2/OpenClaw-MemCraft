@@ -12,6 +12,35 @@
 
 *MemCraft is an OpenClaw memory integration plugin. Its goal is to connect major LLM Memory baselines to OpenClaw and provide a local-first, reproducible, and extensible unified memory framework.*
 
+# Table of Contents
+
+- [Table of Contents](#table-of-contents)
+	- [What MemCraft Does](#what-memcraft-does)
+		- [For General Users](#for-general-users)
+		- [For Researchers](#for-researchers)
+	- [Project Structure](#project-structure)
+	- [Implemented Memory Baselines](#implemented-memory-baselines)
+	- [Quick Start](#quick-start)
+		- [1. Clone](#1-clone)
+		- [2. Start MemoryServer](#2-start-memoryserver)
+		- [3. Install Plugin to OpenClaw](#3-install-plugin-to-openclaw)
+			- [npm Install (Recommended)](#npm-install-recommended)
+			- [Manual Install](#manual-install)
+	- [Environment Configuration](#environment-configuration)
+		- [MemoryServer baseline configs](#memoryserver-baseline-configs)
+		- [OpenClaw plugin config](#openclaw-plugin-config)
+	- [Important Environment Variables](#important-environment-variables)
+		- [MemoryServer](#memoryserver)
+		- [Plugin (MemCraft)](#plugin-memcraft)
+	- [MemCraft Workflow](#memcraft-workflow)
+	- [Frontend Dashboard](#frontend-dashboard)
+	- [DIY: Build a New Memory](#diy-build-a-new-memory)
+		- [Function Interface](#function-interface)
+		- [Minimal Runnable Template](#minimal-runnable-template)
+		- [Configuration Loading](#configuration-loading)
+		- [Implementation Suggestions](#implementation-suggestions)
+		- [Minimal Validation Checklist](#minimal-validation-checklist)
+
 ## What MemCraft Does
 
 ### For General Users
@@ -29,7 +58,7 @@
 - MemCraft/: OpenClaw lifecycle plugin (Node.js)
 - MemoryServer/: memory backend service
 
-## Implemented Memory Store Baselines
+## Implemented Memory Baselines
 
 - bm25_memory: lightweight local BM25 + LLM-compressed storage
 - amem_memory: [A-Mem](https://github.com/agiresearch/A-mem)
@@ -170,7 +199,7 @@ The dashboard includes:
 - Recent 7-day memory trend chart
 - Recent memory list (session/source/time/category, depending on store implementation)
 
-## DIY: Build a New Memory Store
+## DIY: Build a New Memory
 
 DIY lets you connect your own memory algorithm into real OpenClaw conversation flow, for example:
 
@@ -232,10 +261,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from .base_memory import BaseMemoryStore
+from .base_memory import BaseMemory
 
 
-class YourMemoryStore(BaseMemoryStore):
+class YourMemory(BaseMemory):
 	def __init__(
 		self,
 		data_dir: str,
@@ -335,7 +364,7 @@ class YourMemoryStore(BaseMemoryStore):
 Set in `MemoryServer/.env`:
 
 - `MEMORY_STORE_MODULE=your_memory`
-- `MEMORY_STORE_CLASS=YourMemoryStore` (required only if multiple store classes exist in one module)
+- `MEMORY_STORE_CLASS=YourMemory` (required only if multiple store classes exist in one module)
 
 Then restart the service.
 

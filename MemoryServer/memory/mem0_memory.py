@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any
 import hashlib
 from tqdm import tqdm
-from .base_memory import BaseMemoryStore
+from .base_memory import BaseMemory
 from .llm_task_client import LLMTaskClient
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -28,7 +28,7 @@ from mem0.vector_stores.configs import VectorStoreConfig
 logger = logging.getLogger(__name__)
 
 
-class Mem0MemoryStore(BaseMemoryStore):
+class Mem0Memory(BaseMemory):
     """Mem0-backed memory store with local Chroma persistence."""
 
     def __init__(

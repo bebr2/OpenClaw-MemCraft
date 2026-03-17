@@ -14,7 +14,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
-from memory.base_memory import BaseMemoryStore
+from memory.base_memory import BaseMemory
 from memory.llm_task_client import LLMTaskClient
 
 load_dotenv()
@@ -66,29 +66,29 @@ def _resolve_memory_module_path(module_name: str) -> str:
     return f"memory.{normalized}"
 
 
-def _select_store_class(module: Any, explicit_class_name: str | None = None) -> type[BaseMemoryStore]:
+def _select_store_class(module: Any, explicit_class_name: str | None = None) -> type[BaseMemory]:
     if explicit_class_name:
         selected = getattr(module, explicit_class_name, None)
         if selected is None:
             raise RuntimeError(
                 f"MEMORY_STORE_CLASS={explicit_class_name!r} not found in module {module.__name__!r}"
             )
-        if not inspect.isclass(selected) or not issubclass(selected, BaseMemoryStore):
+        if not inspect.isclass(selected) or not issubclass(selected, BaseMemory):
             raise RuntimeError(
-                f"Configured store class {explicit_class_name!r} must inherit BaseMemoryStore"
+                f"Configured store class {explicit_class_name!r} must inherit BaseMemory"
             )
         return selected
 
-    candidates: list[type[BaseMemoryStore]] = []
+    candidates: list[type[BaseMemory]] = []
     for _, member in inspect.getmembers(module, inspect.isclass):
-        if member is BaseMemoryStore:
+        if member is BaseMemory:
             continue
-        if issubclass(member, BaseMemoryStore) and member.__module__ == module.__name__:
+        if issubclass(member, BaseMemory) and member.__module__ == module.__name__:
             candidates.append(member)
 
     if not candidates:
         raise RuntimeError(
-            f"No BaseMemoryStore implementation found in module {module.__name__!r}"
+            f"No BaseMemory implementation found in module {module.__name__!r}"
         )
 
     if len(candidates) > 1:
@@ -101,7 +101,7 @@ def _select_store_class(module: Any, explicit_class_name: str | None = None) -> 
     return candidates[0]
 
 
-def _build_store_init_kwargs(store_cls: type[BaseMemoryStore]) -> dict[str, Any]:
+def _build_store_init_kwargs(store_cls: type[BaseMemory]) -> dict[str, Any]:
     available_kwargs = {
         "data_dir": DATA_DIR,
         "llm_client": llm_client,
@@ -124,7 +124,7 @@ def _build_store_init_kwargs(store_cls: type[BaseMemoryStore]) -> dict[str, Any]
     return filtered_kwargs
 
 
-def _load_memory_store() -> BaseMemoryStore:
+def _load_memory_store() -> BaseMemory:
     module_path = _resolve_memory_module_path(MEMORY_STORE_MODULE)
     try:
         module = importlib.import_module(module_path)
@@ -141,9 +141,9 @@ def _load_memory_store() -> BaseMemoryStore:
             f"Failed to initialize memory store {store_class.__name__!r} from module {module_path!r}: {exc}"
         ) from exc
 
-    if not isinstance(instance, BaseMemoryStore):
+    if not isinstance(instance, BaseMemory):
         raise RuntimeError(
-            f"Loaded memory store instance {store_class.__name__!r} does not implement BaseMemoryStore"
+            f"Loaded memory store instance {store_class.__name__!r} does not implement BaseMemory"
         )
 
     logger = logging.getLogger("memoryserver.app")

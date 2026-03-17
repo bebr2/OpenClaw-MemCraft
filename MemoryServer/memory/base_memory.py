@@ -12,7 +12,7 @@ except Exception:
     ZoneInfo = None
 
 
-class BaseMemoryStore(ABC):
+class BaseMemory(ABC):
     """Abstract memory store with retrieval, compression and persistence APIs."""
 
     @abstractmethod

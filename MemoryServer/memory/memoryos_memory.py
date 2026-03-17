@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from .base_memory import BaseMemoryStore
+from .base_memory import BaseMemory
 from .llm_task_client import LLMTaskClient
 
 # Use vendored MemoryOS source under memory/MemoryOS when package is not installed.
@@ -40,7 +40,7 @@ class _MemoryOSLLMTaskAdapter:
 		)
 
 
-class MemoryOSMemoryStore(BaseMemoryStore):
+class MemoryOSMemory(BaseMemory):
 	"""MemoryOS-backed memory store with local persistence."""
 
 	def __init__(

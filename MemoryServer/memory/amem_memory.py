@@ -10,14 +10,14 @@ from pathlib import Path
 from typing import Any
 
 from .A_mem.agentic_memory.memory_system import AgenticMemorySystem
-from .base_memory import BaseMemoryStore
+from .base_memory import BaseMemory
 from .llm_task_client import LLMTaskClient
 
 
 logger = logging.getLogger(__name__)
 
 
-class AMemMemoryStore(BaseMemoryStore):
+class AMemMemory(BaseMemory):
 
     def __init__(
         self,

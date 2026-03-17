@@ -9,14 +9,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from .base_memory import BaseMemoryStore
+from .base_memory import BaseMemory
 from .llm_task_client import LLMTaskClient
 
 
 logger = logging.getLogger(__name__)
 
 
-class BM25MemoryStore(BaseMemoryStore):
+class BM25Memory(BaseMemory):
     """Simple local BM25 memory store backed by JSONL files."""
 
     def __init__(
