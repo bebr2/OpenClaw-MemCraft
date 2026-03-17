@@ -60,6 +60,13 @@ Default URL: http://127.0.0.1:8765
 
 ### 3. Install Plugin to OpenClaw
 
+
+#### npm Install (Recommended)
+
+```bash
+openclaw plugins install memcraft-openclaw-plugin@latest
+```
+
 #### Manual Install
 
 Copy the entire `./memcraft-openclaw-plugin` folder into the OpenClaw extension directory (usually `~/.openclaw/extensions/`). Then add this in OpenClaw plugin config (usually `~/.openclaw/openclaw.json`):
@@ -82,11 +89,6 @@ Copy the entire `./memcraft-openclaw-plugin` folder into the OpenClaw extension 
 }
 ```
 
-#### npm Install (Recommended)
-
-```bash
-npm install memcraft-openclaw-plugin
-```
 
 For both install methods, ensure this exists in `~/.openclaw/openclaw.json`:
 

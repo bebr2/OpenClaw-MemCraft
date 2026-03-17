@@ -63,6 +63,13 @@ python app.py
 
 ### 3. Install Plugin to OpenClaw
 
+#### npm 安装（推荐）
+
+```bash
+openclaw plugins install memcraft-openclaw-plugin@latest
+```
+
+
 #### 手动安装
 
 将`./memcraft-openclaw-plugin` 整个文件夹复制到 OpenClaw 插件目录，通常为 `~/.openclaw/extensions/`，然后在 OpenClaw 的插件配置（通常为 `~/.openclaw/openclaw.json`）中添加：
@@ -85,11 +92,6 @@ python app.py
 }
 ```
 
-#### npm 安装（推荐）
-
-```bash
-npm install memcraft-openclaw-plugin
-```
 
 以上两种安装方式，均需要在`~/.openclaw/openclaw.json` 中添加：
 
