@@ -46,7 +46,7 @@ Baseline 的实现参照 [MemoryBench](https://github.com/LittleDinoC/MemoryBenc
 ### 1. Clone
 
 ```bash
-git clone <your-repo-url> MemCraft
+git clone https://github.com/bebr2/OpenClaw-MemCraft.git
 cd MemCraft
 ```
 
