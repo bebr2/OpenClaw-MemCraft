@@ -73,7 +73,7 @@ The baseline implementations are reproduced with reference to [MemoryBench](http
 
 ```bash
 git clone https://github.com/bebr2/OpenClaw-MemCraft.git
-cd MemCraft
+cd OpenClaw-MemCraft
 ```
 
 ### 2. Start MemoryServer
@@ -81,7 +81,7 @@ cd MemCraft
 ```bash
 cd MemoryServer
 pip install -r requirements.txt
-copy .env.bm25 .env
+cp .env.bm25 .env
 python app.py
 ```
 
